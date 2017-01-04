@@ -20,7 +20,6 @@ public class InMemoryEntityIdFactory implements EntityIdFactory {
 	 */
 	@Override
 	public synchronized String createId() {
-		// TODO Auto-generated method stub
 		return (nextId++)+"";
 	}
 	@Override

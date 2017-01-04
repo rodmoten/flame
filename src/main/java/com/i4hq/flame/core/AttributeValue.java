@@ -63,6 +63,13 @@ public class AttributeValue {
 			return false;
 		return true;
 	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return String.format("AttributeValue [value=%s, type=%s]", value, type);
+	}
 	
 	
 	
