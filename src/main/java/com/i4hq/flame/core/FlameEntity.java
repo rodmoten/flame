@@ -174,11 +174,15 @@ public class FlameEntity {
 			String [] columns;
 			long[] attributeIds;
 			columns = reader.readNext();
-			if (columns == null){
-				logger.error("No columns in CSV: {}", csvFile);
+			if (columns == null || columns.length == 0){
+				logger.error("The first line doesn't contain the column headers in  {}", csvFile);
 				throw new RuntimeException("No columns in CSV");
 			}
 
+			// For some reason, the first character in the CSV is 65279. As a result, we remove it from the first column header.
+			if (columns[0].charAt(0) == 65279){
+				columns[0] = columns[0].substring(1);
+			}
 			// Throw an exception if the entity ID column is not present.
 			// In addition, get the attribute IDs for each of the column names. We will use them later when we read each row.
 			attributeIds = new long[columns.length];
