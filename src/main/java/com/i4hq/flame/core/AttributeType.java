@@ -18,7 +18,8 @@ public enum AttributeType {
 		}
 	}}),
 	DATE(new ConvertValueToObject(){ public Object toJava(String s){ return Long.parseLong(s);}}),
-	BOOLEAN(new ConvertValueToObject(){ public Object toJava(String s){ return Boolean.parseBoolean(s);}}),
+	BOOLEAN(new ConvertValueToObject(){ public Object toJava(String s){ return Boolean.parseBoolean(s);}}), 
+	REFERENCE(new ConvertValueToObject(){ public Object toJava(String s){ return s;}}),
 	;
 
 	/**
