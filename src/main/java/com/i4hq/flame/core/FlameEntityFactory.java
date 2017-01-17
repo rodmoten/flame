@@ -88,7 +88,7 @@ public class FlameEntityFactory {
 			int lineNumber = 1;
 			// Get the columns.
 			String [] columns;
-			long[] attributeIds;
+			String[] attributeIds;
 			columns = reader.readNext();
 			if (columns == null || columns.length == 0){
 				logger.error("The first line doesn't contain the column headers in  {}", csvFile);
@@ -101,7 +101,7 @@ public class FlameEntityFactory {
 			}
 			// Throw an exception if the entity ID column is not present.
 			// In addition, get the attribute IDs for each of the column names. We will use them later when we read each row.
-			attributeIds = new long[columns.length];
+			attributeIds = new String[columns.length];
 			int entityIdColumnIndex = -1;
 			int longitudeColumnIndex = -1;
 			int latitudeColumnIndex = -1;
@@ -114,7 +114,7 @@ public class FlameEntityFactory {
 				} else if (columnName.equalsIgnoreCase(latitudeColumn)) {
 					latitudeColumnIndex = i;
 				}
-				attributeIds[i] = attributeIdFactory.getAttributeId(columnName);
+				attributeIds[i] = columnName; //attributeIdFactory.getAttributeId(columnName);
 			}
 			if (entityIdColumnIndex < 0) {
 				throw new RuntimeException(String.format("Entity ID column '%s' not present in '%s'", entityIdColumn, csvFile.getAbsolutePath()));
@@ -147,7 +147,7 @@ public class FlameEntityFactory {
 					if (i == entityIdColumnIndex) {
 						continue;
 					}
-					long attributeId = attributeIds[i];
+					String attributeId = attributeIds[i];
 	
 					String attributeName = createAttributePathName(null, attributeId);
 					String value = nextLine[i];
@@ -207,7 +207,7 @@ public class FlameEntityFactory {
 	 * @return Returns a Flame entity created from JSON contained in a string.
 	 */
 	public static FlameEntity createFromJson (EntityIdFactory entityIdFactory, AttributeIdFactory attributeIdFactory, String jsonText){
-		Stack<Long> parentPath = new Stack<>();
+		Stack<String> parentPath = new Stack<>();
 		FlameEntity entity = new FlameEntity(entityIdFactory.createId(jsonText));
 		Gson gson = gsonBuilder.create();
 	
@@ -225,7 +225,7 @@ public class FlameEntityFactory {
 	 * @param jsonObj
 	 */
 	private static void createFromJson(FlameEntity entity, EntityIdFactory entityIdFactory, AttributeIdFactory attributeIdFactory,
-			Stack<Long> parentPath, JsonObject jsonObj) {
+			Stack<String> parentPath, JsonObject jsonObj) {
 	
 	
 		for (Entry<String, JsonElement> jsonElement : jsonObj.entrySet()) {
@@ -242,7 +242,7 @@ public class FlameEntityFactory {
 				throw new IllegalArgumentException ("JSON must not contain any arrays");
 			}
 			boolean isScalar = attributeValue.isJsonPrimitive() || attributeValue.isJsonNull();
-			long attributeId = attributeIdFactory.getAttributeId(attributeName);
+			String attributeId = attributeName; //attributeIdFactory.getAttributeId(attributeName);
 	
 			// If this is a primitive JSON element, then add it to the entity.
 			if (isScalar) {
@@ -305,11 +305,11 @@ public class FlameEntityFactory {
 	 * @param attributeId
 	 * @return Returns the attribute path name 
 	 */
-	private static String createAttributePathName(Stack<Long> parentPath, long attributeId) {
+	private static String createAttributePathName(Stack<String> parentPath, String attributeId) {
 		StringBuilder attributePathName = new StringBuilder();
 		int count = 0;
 		if (parentPath != null){
-			for (long ancestorAttributeId : parentPath) {
+			for (String ancestorAttributeId : parentPath) {
 				if (count > 0) {
 					attributePathName.append(FlameEntity.ATTIRBUTE_PATH_SEPARATOR);
 				}

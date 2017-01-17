@@ -159,7 +159,7 @@ public class FlameEntity {
 	}
 
 	/**
-	 * @return Returns the type of the entity.
+	 * @return Returns the type of the entity. The type is a sorted list of the attributes.
 	 */
 	public String getType() {
 		StringBuilder b = new StringBuilder();

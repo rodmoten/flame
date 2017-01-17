@@ -45,10 +45,13 @@ properties.geometry.angle 1::4:8:9
 		StringBuilder jsonText = readJsonFromFile("src/test/resources/entity-positive-test.json");
 		FlameEntity entity = FlameEntityFactory.createFromJson(entityIdFactory, attributeIdFactory, jsonText.toString());
 		assertEquals("num of attributes", expectedNumOfAttributes, entity.size());
-		String expectedType = "1:::NUMBER\n2:::STRING\n3:::STRING\n4:5:::BOOLEAN\n4:6:::STRING\n4:7:1:::STRING\n4:7:3:::STRING\n4:8:1:::STRING\n4:8:9:::NUMBER\n";
+		String expectedType = "id:::STRING\nname:::STRING\nproperties:attrs:name:::STRING\nproperties:attrs:type:::STRING\nproperties:geometry:angle:::NUMBER\n"
+				+ "properties:geometry:type:::STRING\nproperties:report:::BOOLEAN\nproperties:style:::STRING\n"
+				+ "type:::NUMBER\n";
+		System.out.println(entity.getType());
 		assertEquals("type",expectedType, entity.getType());
-		assertEquals("id(2)","9", entity.getAttribute("2").getValue());
-		assertEquals("properties.attrs.name(4:7:3)","Sector", entity.getAttribute("4:7:3").getValue());
+		assertEquals("id","9", entity.getAttribute("id").getValue());
+		assertEquals("properties.attrs.name(properties.attrs.name)","Sector", entity.getAttribute("properties:attrs:name").getValue());
 		
 		// attribute not in entity
 		assertEquals("properties.attrs.type(4:10:11)",null, entity.getAttribute("4:10:11"));		
@@ -75,17 +78,17 @@ properties.geometry.angle 1::4:8:9
 		int expectedNumOfEntities = 5;
 		assertEquals("number of entities", expectedNumOfEntities, actualEntities.size());
 		// Assert the first entity
-		String[][] firstEntity = {{"type", "2", "Equipment"}, {"name", "3","Trailer, Generator"}};
+		String[][] firstEntity = {{"type", "type", "Equipment"}, {"name", "name","Trailer, Generator"}};
 		assertAttribute(0,0,firstEntity, actualEntities);
 		assertAttribute(1,0,firstEntity, actualEntities);
 
 		// Assert the 3rd entity
-		String[][] thirdEntity = {{"ANALYST_COMMENTS", "8", "NULL"}, {"name", "3","LJUBAN KONSTANTIN STANKIC"}};
+		String[][] thirdEntity = {{"ANALYST_COMMENTS", "ANALYST_COMMENTS", "NULL"}, {"name", "name","LJUBAN KONSTANTIN STANKIC"}};
 		assertAttribute(0,2,thirdEntity, actualEntities);
 		assertAttribute(1,2,thirdEntity, actualEntities);
 		
 		// Assert the last entity
-		String[][] lastEntity = {{"LATITUDE", "4", "40.12242653"}, {"name", "3","352 AD BN"}};
+		String[][] lastEntity = {{"LATITUDE", "LATITUDE", "40.12242653"}, {"name", "name","352 AD BN"}};
 		assertAttribute(0,4,lastEntity, actualEntities);
 		assertAttribute(1,4,lastEntity, actualEntities);
 	}
