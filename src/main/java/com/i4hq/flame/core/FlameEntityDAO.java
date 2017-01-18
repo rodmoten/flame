@@ -52,4 +52,9 @@ public interface FlameEntityDAO {
 	 */
 	public Collection<FlameEntity> getEntitiesByAttributeExpression (AttributeExpression expr);
 	
+	/**
+	 *  A DAO may buffer its contents for performance. This method forces it to persist any buffered contents it may have.
+	 */
+	public void flush();
+	
 }
