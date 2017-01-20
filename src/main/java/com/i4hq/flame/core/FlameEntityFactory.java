@@ -35,14 +35,14 @@ public class FlameEntityFactory {
 	 * @param attributeNames
 	 * @return Returns an attribute path using the given attribute names. 
 	 */
-	public static String createAttributePath(AttributeIdFactory attributeIdFactory, String ... attributeNames){
+	public static String createAttributePath(String ... attributeNames){
 		StringBuilder b = new StringBuilder();
 		int count = 0;
 		for (String attributeName : attributeNames){
 			if (count > 0) {
 				b.append(FlameEntity.ATTIRBUTE_PATH_SEPARATOR);
 			}
-			b.append(attributeIdFactory.getAttributeId(attributeName));
+			b.append(attributeName);
 			count++;
 		}
 		return b.toString();
@@ -67,7 +67,6 @@ public class FlameEntityFactory {
 	 * 
 	 * 
 	 * @param entityIdColumn - name of the column that has the entity ID.
-	 * @param attributeIdFactory
 	 * @param csvFile
 	 * @param longitudeColumn - name of the column that has an entity's longitude.
 	 * @param latitudeColumn - name of the column that has an entity's latitude.
@@ -76,7 +75,7 @@ public class FlameEntityFactory {
 	 * @throws IOException 
 	 * @exception RuntimeException is thrown if no column matches the entityIdColumn.
 	 */
-	public static List<FlameEntity> createFromCsv (String entityIdColumn, AttributeIdFactory attributeIdFactory, File csvFile, String longitudeColumn, String latitudeColumn, boolean nullWordMeansNull) throws IOException{
+	public static List<FlameEntity> createFromCsv (String entityIdColumn, File csvFile, String longitudeColumn, String latitudeColumn, boolean nullWordMeansNull) throws IOException{
 		// Create a reader to read each line.
 		CSVReader reader = new CSVReader(new FileReader(csvFile));
 		List<FlameEntity> entities = new LinkedList<>();
@@ -114,7 +113,7 @@ public class FlameEntityFactory {
 				} else if (columnName.equalsIgnoreCase(latitudeColumn)) {
 					latitudeColumnIndex = i;
 				}
-				attributeIds[i] = columnName; //attributeIdFactory.getAttributeId(columnName);
+				attributeIds[i] = columnName;
 			}
 			if (entityIdColumnIndex < 0) {
 				throw new RuntimeException(String.format("Entity ID column '%s' not present in '%s'", entityIdColumn, csvFile.getAbsolutePath()));
@@ -206,13 +205,13 @@ public class FlameEntityFactory {
 	 * @param jsonText
 	 * @return Returns a Flame entity created from JSON contained in a string.
 	 */
-	public static FlameEntity createFromJson (EntityIdFactory entityIdFactory, AttributeIdFactory attributeIdFactory, String jsonText){
+	public static FlameEntity createFromJson (EntityIdFactory entityIdFactory, String jsonText){
 		Stack<String> parentPath = new Stack<>();
 		FlameEntity entity = new FlameEntity(entityIdFactory.createId(jsonText));
 		Gson gson = gsonBuilder.create();
 	
 		JsonObject jsonObj = gson.fromJson(jsonText, JsonObject.class);
-		createFromJson(entity, entityIdFactory, attributeIdFactory, parentPath, jsonObj);
+		createFromJson(entity, entityIdFactory, parentPath, jsonObj);
 	
 		return entity;
 	}
@@ -224,7 +223,7 @@ public class FlameEntityFactory {
 	 * @param parentPath
 	 * @param jsonObj
 	 */
-	private static void createFromJson(FlameEntity entity, EntityIdFactory entityIdFactory, AttributeIdFactory attributeIdFactory,
+	private static void createFromJson(FlameEntity entity, EntityIdFactory entityIdFactory,
 			Stack<String> parentPath, JsonObject jsonObj) {
 	
 	
@@ -242,7 +241,7 @@ public class FlameEntityFactory {
 				throw new IllegalArgumentException ("JSON must not contain any arrays");
 			}
 			boolean isScalar = attributeValue.isJsonPrimitive() || attributeValue.isJsonNull();
-			String attributeId = attributeName; //attributeIdFactory.getAttributeId(attributeName);
+			String attributeId = attributeName;
 	
 			// If this is a primitive JSON element, then add it to the entity.
 			if (isScalar) {
@@ -255,7 +254,7 @@ public class FlameEntityFactory {
 			} else {
 				// Add the JSON element's attribute ID to the stack and continue with its children.
 				parentPath.push(attributeId);
-				createFromJson (entity, entityIdFactory, attributeIdFactory, parentPath, attributeValue.getAsJsonObject());
+				createFromJson (entity, entityIdFactory, parentPath, attributeValue.getAsJsonObject());
 			}
 		}
 		if (!parentPath.empty()) {

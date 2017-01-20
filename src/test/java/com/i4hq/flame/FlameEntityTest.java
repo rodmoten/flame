@@ -2,20 +2,16 @@ package com.i4hq.flame;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
 
 import org.junit.Test;
 
-import com.i4hq.flame.core.AttributeIdFactory;
 import com.i4hq.flame.core.EntityIdFactory;
 import com.i4hq.flame.core.FlameEntity;
 import com.i4hq.flame.core.FlameEntityFactory;
-import com.i4hq.flame.in_memory.InMemoryAttributeIdFactory;
+import com.i4hq.flame.core.util.FileUtil;
 import com.i4hq.flame.in_memory.InMemoryEntityIdFactory;
 
 /**
@@ -25,7 +21,6 @@ import com.i4hq.flame.in_memory.InMemoryEntityIdFactory;
 public class FlameEntityTest {
 
 	private EntityIdFactory entityIdFactory = new InMemoryEntityIdFactory();
-	private AttributeIdFactory attributeIdFactory = new InMemoryAttributeIdFactory();
 
 	@Test
 	public void testCreateFromJson() throws IOException {
@@ -42,8 +37,8 @@ properties.geometry.type 1::4:8:1
 properties.geometry.angle 1::4:8:9
 		 */
 		int expectedNumOfAttributes = 9;
-		StringBuilder jsonText = readJsonFromFile("src/test/resources/entity-positive-test.json");
-		FlameEntity entity = FlameEntityFactory.createFromJson(entityIdFactory, attributeIdFactory, jsonText.toString());
+		StringBuilder jsonText = FileUtil.readFile("src/test/resources/entity-positive-test.json");
+		FlameEntity entity = FlameEntityFactory.createFromJson(entityIdFactory, jsonText.toString());
 		assertEquals("num of attributes", expectedNumOfAttributes, entity.size());
 		String expectedType = "id:::STRING\nname:::STRING\nproperties:attrs:name:::STRING\nproperties:attrs:type:::STRING\nproperties:geometry:angle:::NUMBER\n"
 				+ "properties:geometry:type:::STRING\nproperties:report:::BOOLEAN\nproperties:style:::STRING\n"
@@ -60,21 +55,21 @@ properties.geometry.angle 1::4:8:9
 
 	@Test(expected=IllegalArgumentException.class)
 	public void testCreateFromJson_arrays() throws Exception {
-		StringBuilder jsonText = readJsonFromFile("src/test/resources/entity-negative-test1.json");
-		FlameEntityFactory.createFromJson(entityIdFactory, attributeIdFactory, jsonText.toString());
+		StringBuilder jsonText = FileUtil.readFile("src/test/resources/entity-negative-test1.json");
+		FlameEntityFactory.createFromJson(entityIdFactory, jsonText.toString());
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void testCreateFromJson_invalidFieldName() throws IOException {
-		StringBuilder jsonText = readJsonFromFile("src/test/resources/entity-negative-test2.json");
-		FlameEntityFactory.createFromJson(entityIdFactory, attributeIdFactory, jsonText.toString());
+		StringBuilder jsonText = FileUtil.readFile("src/test/resources/entity-negative-test2.json");
+		FlameEntityFactory.createFromJson(entityIdFactory, jsonText.toString());
 	}
 
 	@Test
 	public void testCreateFromCsv() throws Exception {
 		File csvFile = new File("src/test/resources/few-dummy-entities-with-dups.csv");
 		
-		List<FlameEntity> actualEntities = FlameEntityFactory.createFromCsv("entity_id", attributeIdFactory, csvFile, "LONGITUDE", "LATITUDE", false);
+		List<FlameEntity> actualEntities = FlameEntityFactory.createFromCsv("entity_id", csvFile, "LONGITUDE", "LATITUDE", false);
 		int expectedNumOfEntities = 5;
 		assertEquals("number of entities", expectedNumOfEntities, actualEntities.size());
 		// Assert the first entity
@@ -107,21 +102,6 @@ properties.geometry.angle 1::4:8:9
 	}
 	
 	
-	/**
-	 * @param filePath 
-	 * @return
-	 * @throws FileNotFoundException
-	 * @throws IOException
-	 */
-	private StringBuilder readJsonFromFile(String filePath) throws FileNotFoundException, IOException {
-		BufferedReader reader = new BufferedReader (new FileReader (filePath));
-		StringBuilder jsonText = new StringBuilder();
-		while (reader.ready()) {
-			jsonText.append(reader.readLine());
-			jsonText.append('\n');
-		}
-		reader.close();
-		return jsonText;
-	}
+	
 
 }
