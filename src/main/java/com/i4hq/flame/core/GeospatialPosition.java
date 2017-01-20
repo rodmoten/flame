@@ -23,6 +23,8 @@ public class GeospatialPosition {
 		this.longitude = other.longitude;
 		this.latitude = other.latitude;
 	}
+	
+	
 	/**
 	 * Create a Geospatial Position relative to a given point. 
 	 * @param center
