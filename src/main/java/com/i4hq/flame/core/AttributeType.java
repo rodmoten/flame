@@ -19,7 +19,21 @@ public enum AttributeType {
 	}}),
 	DATE(new ConvertValueToObject(){ public Object toJava(String s){ return Long.parseLong(s);}}),
 	BOOLEAN(new ConvertValueToObject(){ public Object toJava(String s){ return Boolean.parseBoolean(s);}}), 
-	REFERENCE(new ConvertValueToObject(){ public Object toJava(String s){ return s;}}),
+	REFERENCE(new ConvertValueToObject(){ public Object toJava(String s){ return s;}}), 
+	LATITUDE(new ConvertValueToObject(){ public Object toJava(String s){
+		try {
+			return Long.parseLong(s);
+		} catch(NumberFormatException ex){
+			return Double.parseDouble(s);
+		}
+	}}),
+	LONGITUDE(new ConvertValueToObject(){ public Object toJava(String s){
+		try {
+			return Long.parseLong(s);
+		} catch(NumberFormatException ex){
+			return Double.parseDouble(s);
+		}
+	}}),
 	;
 
 	/**

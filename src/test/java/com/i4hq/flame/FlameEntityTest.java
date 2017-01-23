@@ -86,6 +86,10 @@ properties.geometry.angle 1::4:8:9
 		String[][] lastEntity = {{"LATITUDE", "LATITUDE", "40.12242653"}, {"name", "name","352 AD BN"}};
 		assertAttribute(0,4,lastEntity, actualEntities);
 		assertAttribute(1,4,lastEntity, actualEntities);
+		assertEquals("latitude", 40.12242653 + "", actualEntities.get(4).getGeospatialPosition().getLatitude() + "");
+		assertEquals("longitude", 48.13782394 + "", actualEntities.get(4).getGeospatialPosition().getLongitude() + "");
+
+		
 	}
 
 	

@@ -3,6 +3,9 @@
  */
 package com.i4hq.flame.core;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * @author rmoten
  *
@@ -10,14 +13,18 @@ package com.i4hq.flame.core;
 public class AttributeValue {
 	private final String value;
 	private final AttributeType type;
+	private final List<MetadataItem> metadata = new LinkedList<MetadataItem>();
 	/**
 	 * @param value
 	 * @param type
 	 */
-	public AttributeValue(String value, AttributeType type) {
+	public AttributeValue(String value, AttributeType type, MetadataItem ...metadata) {
 		super();
 		this.value = value;
 		this.type = type;
+		for (MetadataItem md : metadata){
+			this.metadata.add(md);
+		}
 	}
 	/**
 	 * @return the value
@@ -69,6 +76,13 @@ public class AttributeValue {
 	@Override
 	public String toString() {
 		return String.format("AttributeValue [value=%s, type=%s]", value, type);
+	}
+	
+	public void addMetadata (String name , String value){
+		this.metadata.add(new MetadataItem(name, value));
+	}
+	public List<MetadataItem> getMetadata() {
+		return metadata;
 	}
 	
 	

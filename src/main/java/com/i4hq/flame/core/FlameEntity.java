@@ -20,7 +20,7 @@ public class FlameEntity {
 
 	private static Logger logger = LoggerFactory.getLogger(FlameEntity.class);
 
-	private final Map<String, AttributeValue> attributes = new HashMap<>();
+	private final Map<String, List<AttributeValue>> attributes = new HashMap<>();
 	public static final char ATTIRBUTE_PATH_SEPARATOR = ':';
 	public static final String ENITY_ID_ATTIRBUTE_PATH_SEPARATOR = "" + ATTIRBUTE_PATH_SEPARATOR + ATTIRBUTE_PATH_SEPARATOR;
 	private final String id;
@@ -76,7 +76,7 @@ public class FlameEntity {
 
 
 
-	
+
 
 	//	/**
 	//	 * @param entityType
@@ -113,14 +113,26 @@ public class FlameEntity {
 	/**
 	 * @param attributes
 	 */
-	public void addAttribute(String name, Object value, AttributeType type) {
+	public void addAttribute(String name, Object value, AttributeType type, MetadataItem ...metadata) {
 		if (name == null) {
 			return;
 		}
+
 		// Hopefully, we aren't adding attributes and trying to use the hash at the same time.
 		hash = null;
-		this.attributes.put(name, new AttributeValue (value == null ? null : value.toString(), type));
+		List<AttributeValue> values = this.attributes.get(name);
+		if (values == null) {
+			values = new LinkedList<>();
+		}
+		values.add(new AttributeValue (value == null ? null : value.toString(), type, metadata));
+		this.attributes.put(name, values);
 
+		// Set the geolocation of the entity if the attribute has a geospatial attribute.
+		if (type == AttributeType.LATITUDE){
+			this.setLatitude(((Number) value).doubleValue());
+		} else if (type == AttributeType.LONGITUDE) {
+			this.setLongitude(((Number) value).doubleValue()); 
+		}
 	}
 
 	public String getEntityIdPrefix() {
@@ -134,15 +146,36 @@ public class FlameEntity {
 		return id;
 	}
 
-		
+
 	/**
 	 * @param attributePath - 
 	 * @return Returns the value for this attribute. null will be return if the value of the attribute is null or if the entity doesn't contain the attribute.
 	 */
 	public AttributeValue getAttribute(String attributePath) {
-		return attributes.get(attributePath);
+
+		final List<AttributeValue> list = attributes.get(attributePath);
+		return list == null ? null : list.get(0);
 	}
-	
+
+	public List<AttributeValue> getReferenceAttributes(){
+		final AttributeType targetType = AttributeType.REFERENCE;
+
+		return getAttributesOfSpecificType(targetType);
+	}
+
+	public List<AttributeValue> getAttributesOfSpecificType(final AttributeType targetType) {
+		List<AttributeValue> values = new LinkedList<>();
+		for (List<AttributeValue> vs : attributes.values()){
+			for (AttributeValue v : vs) {
+				if (v.getType() == targetType) {
+				}
+				values.add(v);
+			}
+		}
+		return values;
+	}
+
+
 	/**
 	 * @param attributePath
 	 * @return Returns true if and only if the entity contains this attribute.
@@ -150,7 +183,7 @@ public class FlameEntity {
 	public boolean containAttribute(String attributePath) {
 		return attributes.containsKey(attributePath);
 	}
-	
+
 	/**
 	 * @return Returns the number of attributes in the entity.
 	 */
@@ -165,8 +198,10 @@ public class FlameEntity {
 		StringBuilder b = new StringBuilder();
 		List<String> attributeTypExpression = new LinkedList<>();
 
-		for (Entry<String, AttributeValue> entry : this.attributes.entrySet()) {
-			attributeTypExpression.add(entry.getKey() + ATTRIBUTE_TYPE_EXPR_SEPARATOR + entry.getValue().getType());
+		for (Entry<String, List<AttributeValue>> entry : this.attributes.entrySet()) {
+			if (entry.getValue() != null) {
+				attributeTypExpression.add(entry.getKey() + ATTRIBUTE_TYPE_EXPR_SEPARATOR + entry.getValue().get(0).getType());
+			}
 		}
 		Collections.sort(attributeTypExpression);
 		for (String attributeTypeExpr : attributeTypExpression){
@@ -184,11 +219,11 @@ public class FlameEntity {
 		if (attributeName == null) {
 			return null;
 		}
-		AttributeValue value = this.attributes.get(attributeName);
+		List<AttributeValue> value = this.attributes.get(attributeName);
 		if (value == null){
 			return null;
 		}
-		return value.getType();
+		return value.get(0).getType();
 	}
 
 	/**
@@ -202,15 +237,20 @@ public class FlameEntity {
 			}
 			MessageDigest md = MessageDigest.getInstance("MD5");
 			md.update(this.id.getBytes());
-			for (Entry<String, AttributeValue> attribute : attributes.entrySet()) {
+			for (Entry<String, List<AttributeValue>> attribute : attributes.entrySet()) {
 				md.update(attribute.getKey().getBytes());
-				AttributeValue av = attribute.getValue();
-				if (av == null) {
-					md.update(new byte[]{'n','u','l','l'});
-				} else {
-					String v = av.getValue();
-					md.update(v == null ? new byte[]{'n','u','l','l'} :  v.getBytes());
-					md.update(av.getType().getBytes());
+				List<AttributeValue> values = attribute.getValue();
+				if (values == null){
+					continue;
+				}
+				for (AttributeValue av : values){
+					if (av == null) {
+						md.update(new byte[]{'n','u','l','l'});
+					} else {
+						String v = av.getValue();
+						md.update(v == null ? new byte[]{'n','u','l','l'} :  v.getBytes());
+						md.update(av.getType().getBytes());
+					}
 				}
 			}
 			hash = new BigInteger(1,md.digest()).toString(16);
@@ -243,9 +283,28 @@ public class FlameEntity {
 	/**
 	 * @return Returns the attributes of this entity
 	 */
-	public Set<Entry<String, AttributeValue>> getAttributes() {
+	public Set<Entry<String, List<AttributeValue>>> getAttributes() {
 		return attributes.entrySet();
 	}
 
+	/**
+	 * @param d
+	 */
+	public void setLatitude(Double d) {
+		if (this.geospatialPosition == null){
+			this.geospatialPosition = new GeospatialPosition(0, 0);
+		}
+		this.geospatialPosition.addLatitude(d);
 
+	}
+
+	/**
+	 * @param d
+	 */
+	public void setLongitude(Double d) {
+		if (this.geospatialPosition == null){
+			this.geospatialPosition = new GeospatialPosition(0, 0);
+		}
+		this.geospatialPosition.addLongitude(d);
+	}
 }
