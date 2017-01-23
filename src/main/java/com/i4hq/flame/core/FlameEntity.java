@@ -149,7 +149,7 @@ public class FlameEntity {
 
 	/**
 	 * @param attributePath - 
-	 * @return Returns the value for this attribute. null will be return if the value of the attribute is null or if the entity doesn't contain the attribute.
+	 * @return Returns the 1st value  of the attribute. null will be return if the value of the attribute is null or if the entity doesn't contain the attribute.
 	 */
 	public AttributeValue getAttribute(String attributePath) {
 
@@ -157,11 +157,15 @@ public class FlameEntity {
 		return list == null ? null : list.get(0);
 	}
 
-	public List<AttributeValue> getReferenceAttributes(){
-		final AttributeType targetType = AttributeType.REFERENCE;
-
-		return getAttributesOfSpecificType(targetType);
+	
+	/**
+	 * @param attributePath - 
+	 * @return Returns all of the values for a given attribute.
+	 */
+	public List<AttributeValue> getAttributes(String attributePath) {
+		return attributes.get(attributePath);
 	}
+	
 
 	public List<AttributeValue> getAttributesOfSpecificType(final AttributeType targetType) {
 		List<AttributeValue> values = new LinkedList<>();
@@ -286,6 +290,7 @@ public class FlameEntity {
 	public Set<Entry<String, List<AttributeValue>>> getAttributes() {
 		return attributes.entrySet();
 	}
+
 
 	/**
 	 * @param d
