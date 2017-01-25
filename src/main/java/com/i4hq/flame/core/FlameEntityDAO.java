@@ -5,6 +5,7 @@ package com.i4hq.flame.core;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Implementations of this interface implement CRUD operations of Flame entities.
@@ -56,5 +57,11 @@ public interface FlameEntityDAO {
 	 *  A DAO may buffer its contents for performance. This method forces it to persist any buffered contents it may have.
 	 */
 	public void flush();
+	
+	/**
+	 * Determine if any attributes are geo locations. If so, make sure that the given entities are indexed by those locations.
+	 * @param entityIds
+	 */
+	public void updateEntitiesWithGeoLoctions(Collection<String> entityIds);
 	
 }
