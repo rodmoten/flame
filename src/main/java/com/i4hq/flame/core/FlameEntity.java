@@ -30,7 +30,7 @@ public class FlameEntity {
 	private String hash = "";
 
 
-	FlameEntity(String id) {
+	protected FlameEntity(String id) {
 		this.id = id;
 		entityIdPrefix = id + ENITY_ID_ATTIRBUTE_PATH_SEPARATOR;
 	}
@@ -311,5 +311,9 @@ public class FlameEntity {
 			this.geospatialPosition = new GeospatialPosition(0, 0);
 		}
 		this.geospatialPosition.addLongitude(d);
+	}
+
+	public String getReference(String referenceName) {
+		return null;
 	}
 }
