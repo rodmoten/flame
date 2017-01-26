@@ -5,7 +5,6 @@ package com.i4hq.flame.core;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Implementations of this interface implement CRUD operations of Flame entities.
