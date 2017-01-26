@@ -60,7 +60,7 @@ public class AttributeExpression {
     
     public String attributeName;
     public Operator operator;
-    public GeospatialPosition[] coordinates;
+    public Geo2DPoint[] coordinates;
     public Literal[] literals;
     public AttributeExpression[] subExprs;
     
@@ -110,11 +110,11 @@ public class AttributeExpression {
     	return relExpr(Operator.LTE, attributeName, literal);
     }
     
-    public static AttributeExpression withinExpr (String attributeName, GeospatialPosition pos1, GeospatialPosition pos2, GeospatialPosition pos3, GeospatialPosition ... morePositions){
+    public static AttributeExpression withinExpr (String attributeName, Geo2DPoint pos1, Geo2DPoint pos2, Geo2DPoint pos3, Geo2DPoint ... morePositions){
     	AttributeExpression expr = new AttributeExpression();
     	expr.operator = Operator.WITHIN;
   
-    	expr.coordinates = new GeospatialPosition[3 + morePositions.length];
+    	expr.coordinates = new Geo2DPoint[3 + morePositions.length];
     	expr.coordinates[0] = pos1;
     	expr.coordinates[1] = pos2;
     	expr.coordinates[2] = pos3;
@@ -172,7 +172,7 @@ public class AttributeExpression {
 	/**
 	 * @return the coordinates
 	 */
-	public GeospatialPosition[] getCoordinates() {
+	public Geo2DPoint[] getCoordinates() {
 		return coordinates;
 	}
 

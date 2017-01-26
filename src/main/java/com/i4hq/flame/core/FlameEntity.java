@@ -26,7 +26,7 @@ public class FlameEntity {
 	private final String id;
 	private final String entityIdPrefix;
 	public static final String ATTRIBUTE_TYPE_EXPR_SEPARATOR = ":::";
-	private GeospatialPosition geospatialPosition;
+	private Geo2DPoint geospatialPosition;
 	private String hash = "";
 
 
@@ -100,13 +100,13 @@ public class FlameEntity {
 	 * @param latitude
 	 */
 	public void setLocation(double longitude, double latitude) {
-		this.geospatialPosition = new GeospatialPosition(longitude, latitude);
+		this.geospatialPosition = new Geo2DPoint(longitude, latitude);
 	}
 
 	/**
 	 * @return Returns the location of this entity.
 	 */
-	public GeospatialPosition getGeospatialPosition(){
+	public Geo2DPoint getGeospatialPosition(){
 		return this.geospatialPosition;
 	}
 
@@ -297,9 +297,9 @@ public class FlameEntity {
 	 */
 	public void setLatitude(Double d) {
 		if (this.geospatialPosition == null){
-			this.geospatialPosition = new GeospatialPosition(0, 0);
+			this.geospatialPosition = new Geo2DPoint(0, 0);
 		}
-		this.geospatialPosition.addLatitude(d);
+		this.geospatialPosition.setLatitude(d);
 
 	}
 
@@ -308,9 +308,9 @@ public class FlameEntity {
 	 */
 	public void setLongitude(Double d) {
 		if (this.geospatialPosition == null){
-			this.geospatialPosition = new GeospatialPosition(0, 0);
+			this.geospatialPosition = new Geo2DPoint(0, 0);
 		}
-		this.geospatialPosition.addLongitude(d);
+		this.geospatialPosition.setLongitude(d);
 	}
 
 	public String getReference(String referenceName) {
