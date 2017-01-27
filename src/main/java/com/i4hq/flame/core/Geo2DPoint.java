@@ -27,16 +27,23 @@ public class Geo2DPoint {
 
 
 	/**
-	 * Create a Geospatial Position relative to a given point. 
+	 * Create a Geo-point from a Cartesian point.
 	 * @param center
-	 * @param longitudeDistance - distance from center in meters  
-	 * @param latidudeDistance - distance from center in meters
+	 * @param x
+	 * @param y
+	 * @param z
 	 */
-	public Geo2DPoint(Geo2DPoint center, double longitudeDistance, double latidudeDistance) {
-		this.latitude = center.latitude + latidudeDistance/LATITUDE_LENGTH_PER_DEGREE_IN_METERS;
-		this.longitude = center.longitude + (longitudeDistance/EARTH_RADIUS_IN_METERS) * (180/Math.PI) / Math.cos(this.latitude * Math.PI/180);
+	public Geo2DPoint(Geo2DPoint center, double x, double y, double z) {
+		// 1. Determine the distance of the Cartesian point and the center. We turn it into a geo-point to do that.
+		this.latitude = Math.asin(z / EARTH_RADIUS_IN_METERS);
+		this.longitude = Math.atan2(y, x);
+		double distanceFromCenter = distance(this.longitude, this.latitude);
+		
+		this.latitude = center.latitude + distanceFromCenter/LATITUDE_LENGTH_PER_DEGREE_IN_METERS;
+		this.longitude = center.longitude + (distanceFromCenter/EARTH_RADIUS_IN_METERS) * (180/Math.PI) / Math.cos(this.latitude * Math.PI/180);
+		
 	}
-
+	
 	/**
 	 * @return the longitude
 	 */
