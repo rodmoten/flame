@@ -12,8 +12,10 @@ public class Geo2DPoint {
 	private double longitude;
 	private double latitude;
 	/**
-	 * @param longitude
-	 * @param latitude
+	 * Create a instance of this class using coordinates in a geodetic coordinate system.
+	 * No conversion is performed on the input parameters.
+	 * @param longitude - Longitude in a geodetic coordinate system
+	 * @param latitude - Latitude in a geodetic coordinate system
 	 */
 	public Geo2DPoint(double longitude, double latitude) {
 		super();
