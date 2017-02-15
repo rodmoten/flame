@@ -14,6 +14,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
 public class FlameEntity {	
@@ -28,6 +29,7 @@ public class FlameEntity {
 	public static final String ATTRIBUTE_TYPE_EXPR_SEPARATOR = ":::";
 	private Geo2DPoint geospatialPosition;
 	private String hash = "";
+	private final static GsonBuilder gsonBuilder = new GsonBuilder();
 
 
 	protected FlameEntity(String id) {
@@ -279,7 +281,35 @@ public class FlameEntity {
 	 * @return Returns the JSON version of this Flame entity.
 	 */
 	public JsonObject toJson() {
-		return null;
+		JsonObject jsonObj = new JsonObject();
+		for (Entry<String, List<AttributeValue>> attribute : attributes.entrySet()) {
+			List<AttributeValue> attributeValue = attribute.getValue();
+			
+			// TODO support lists.
+			if (attributeValue.size() > 1){
+				throw new RuntimeException ("array not supported");
+			}
+			if (attributeValue.size() == 1) {
+				AttributeValue value = attributeValue.get(0);
+				if (value == null || value.getValue() == null){
+					jsonObj.add(attribute.getKey(), null);
+					continue;
+				}
+				switch (value.getType()) {
+					case NUMBER:
+						jsonObj.addProperty(attribute.getKey(), new Double(value.getValue()));
+						break;
+					case BOOLEAN:
+						jsonObj.addProperty(attribute.getKey(), new Boolean(value.getValue()));
+						break;
+					default:
+						jsonObj.addProperty(attribute.getKey(), value.getValue());
+						break;
+				}
+
+			}
+		}
+		return jsonObj;
 	}
 
 
