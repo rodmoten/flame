@@ -14,7 +14,6 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
 public class FlameEntity {	
@@ -29,7 +28,6 @@ public class FlameEntity {
 	public static final String ATTRIBUTE_TYPE_EXPR_SEPARATOR = ":::";
 	private Geo2DPoint geospatialPosition;
 	private String hash = "";
-	private final static GsonBuilder gsonBuilder = new GsonBuilder();
 
 
 	protected FlameEntity(String id) {

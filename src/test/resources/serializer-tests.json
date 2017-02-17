@@ -1,0 +1,89 @@
+{
+	"happyPath": {
+		"id": "test1",
+		"latitude": 45.6,
+		"longitude": -9.5455,
+		"attributes": [{
+			"name": "attr1",
+			"values": [{
+				"value": 777,
+				"type": "NUMBER"
+			}]
+		}, {
+			"name": "attr2",
+			"values": [{
+				"value": 777,
+				"type": "NUMBER"
+			}, {
+				"value": "believe",
+				"type": "STRING"
+			}]
+		}]
+	}
+
+	,
+	"metadata": {
+		"id": "test2",
+		"latitude": 45.6,
+		"longitude": -9.5455,
+		"attributes": [{
+			"name": "attr1",
+			"values": [{
+				"value": 777,
+				"type": "NUMBER",
+				"metadata": [{
+					"name": "classification",
+					"value": "U"
+				}]
+			}]
+		}, {
+			"name": "attr2",
+			"values": [{
+				"value": 777,
+				"type": "NUMBER",
+				"metadata": [{
+					"name": "classification",
+					"value": "U"
+				}, {
+					"name": "region",
+					"value": "NE"
+				}]
+			}, {
+				"value": "believe",
+				"type": "STRING"
+			}]
+		}]
+	}
+
+	,
+	"no_attributes": {
+		"id": "test3",
+		"latitude": 45.6,
+		"attributes": []
+	}
+
+	,
+	"no_geo_blank_metadata": {
+		"id": "test4",
+		"attributes": [{
+			"name": "attr1",
+			"values": [{
+				"value": 777,
+				"type": "NUMBER"
+			}]
+		}, {
+			"name": "attr2",
+			"values": [{
+				"value": 777,
+				"type": "NUMBER",
+				"metadata": null
+			}, {
+				"value": "believe",
+				"type": "STRING",
+				"metadata": []
+			}]
+		}]
+	}
+	
+
+}
