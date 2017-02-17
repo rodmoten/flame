@@ -3,6 +3,7 @@
  */
 package com.i4hq.flame.core;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -34,6 +35,31 @@ public class FlameEntitySerializer {
 	 * @return Returns a serialized JSON object.
 	 */
 	public String serialize (FlameEntity entity){
+		JsonObject serializedEntity = toJsonObject(entity);
+		
+		return serializedEntity.toString();
+	}
+	
+	/**
+	 * @param entities
+	 * @return
+	 */
+	public String serialize(Collection<FlameEntity> entities){
+		JsonObject serializedEntities = new JsonObject();
+		JsonArray serializedEntityArray = new JsonArray();
+		serializedEntities.add("entities", serializedEntityArray);
+		for (FlameEntity entity : entities) {
+			serializedEntityArray.add(serialize(entity));
+		}
+		return serializedEntities.toString();
+	}
+
+
+	/**
+	 * @param entity
+	 * @return
+	 */
+	private JsonObject toJsonObject(FlameEntity entity) {
 		JsonObject serializedEntity = new JsonObject();
 		serializedEntity.addProperty("id", entity.getId());
 		Geo2DPoint geoPosition = entity.getGeospatialPosition();
@@ -80,8 +106,7 @@ public class FlameEntitySerializer {
 			}
 			
 		}
-		
-		return serializedEntity.toString();
+		return serializedEntity;
 	}
 	
 	@SuppressWarnings("unused")
