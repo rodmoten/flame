@@ -5,6 +5,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -124,7 +125,19 @@ public class FlameEntity {
 		if (values == null) {
 			values = new LinkedList<>();
 		}
-		values.add(new AttributeValue (value == null ? null : value.toString(), type, metadata));
+		// Make sure all metadata names are unique.
+		if (metadata != null) {
+			Set<String> metadataNames = new HashSet<>();
+			for (MetadataItem md : metadata){
+				if(!metadataNames.add(md.getName())){
+					throw new DuplicateMetadataException(md.getName());
+				}
+			}
+			// Help GC
+			metadataNames = null;
+		}
+		
+		values.add(new AttributeValue (value == null ? null : value.toString(), type, metadata == null ? new MetadataItem[0] : metadata));
 		this.attributes.put(name, values);
 
 		// Set the geolocation of the entity if the attribute has a geospatial attribute.

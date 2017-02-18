@@ -1,4 +1,4 @@
-package com.i4hq.flame;
+package com.i4hq.flame.core;
 
 import static org.junit.Assert.assertEquals;
 
@@ -91,7 +91,18 @@ properties.geometry.angle 1::4:8:9
 
 		
 	}
-
+	@Test
+	public void testAddAttribute_duplicateMetadata() throws Exception {
+		FlameEntity fe = FlameEntityFactory.createEntity("abcde");
+		fe.addAttribute("x", 456, AttributeType.NUMBER, new MetadataItem("abc", "123"), new MetadataItem("egh", "123"), new MetadataItem("hij", "123"));
+		fe.addAttribute("y", 456, AttributeType.NUMBER, new MetadataItem("abc", "123"), new MetadataItem("egh", "123"), new MetadataItem("hij", "123"));
+		
+		try {
+			fe.addAttribute("z", 654, AttributeType.NUMBER, new MetadataItem("ijk", "123"), new MetadataItem("pqr", "123"), new MetadataItem("ijk", "123"));
+		} catch (DuplicateMetadataException ex ){
+			assertEquals("ijk", ex.getDuplicateName());
+		}
+}
 	
 	/**
 	 * @param indexOfExpectedAttribute

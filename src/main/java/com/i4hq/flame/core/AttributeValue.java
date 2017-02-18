@@ -18,7 +18,7 @@ public class AttributeValue {
 	 * @param value
 	 * @param type
 	 */
-	public AttributeValue(String value, AttributeType type, MetadataItem ...metadata) {
+	AttributeValue(String value, AttributeType type, MetadataItem ...metadata) {
 		super();
 		this.value = value;
 		this.type = type;
