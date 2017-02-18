@@ -10,7 +10,7 @@ import java.util.List;
  * @author rmoten
  *
  */
-public class AttributeValue {
+public class Attribute {
 	private final String value;
 	private final AttributeType type;
 	private final List<MetadataItem> metadata = new LinkedList<MetadataItem>();
@@ -18,7 +18,7 @@ public class AttributeValue {
 	 * @param value
 	 * @param type
 	 */
-	AttributeValue(String value, AttributeType type, MetadataItem ...metadata) {
+	Attribute(String value, AttributeType type, MetadataItem ...metadata) {
 		super();
 		this.value = value;
 		this.type = type;
@@ -60,7 +60,7 @@ public class AttributeValue {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		AttributeValue other = (AttributeValue) obj;
+		Attribute other = (Attribute) obj;
 		if (type != other.type)
 			return false;
 		if (value == null) {

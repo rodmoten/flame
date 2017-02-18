@@ -59,12 +59,13 @@ public class AttributeExpression {
 		}
     }
     
-    public String attributeName;
-    public Operator operator;
-    public Geo2DPoint[] coordinates;
-    public Literal[] literals;
-    public AttributeExpression[] subExprs;
+    private String attributeName;
+    private Operator operator;
+    private Geo2DPoint[] coordinates;
+    private Literal[] literals;
+    private AttributeExpression[] subExprs;
 	private EntityType entityType;
+	private int limit = -1;
     
     /**
      * Create an AND attribute expression.
@@ -209,6 +210,18 @@ public class AttributeExpression {
 	 */
 	public EntityType getEntityType() {
 		return entityType;
+	}
+
+	public int getLimit() {
+		return limit;
+	}
+
+	/**
+	 * Limit the number of responses to the given value. A non-positive value means do not limit responses.
+	 * @param limit
+	 */
+	public void setLimit(int limit) {
+		this.limit = limit;
 	}
     
     
