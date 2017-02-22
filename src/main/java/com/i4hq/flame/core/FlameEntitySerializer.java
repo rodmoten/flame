@@ -49,7 +49,7 @@ public class FlameEntitySerializer {
 		JsonArray serializedEntityArray = new JsonArray();
 		serializedEntities.add("entities", serializedEntityArray);
 		for (FlameEntity entity : entities) {
-			serializedEntityArray.add(serialize(entity));
+			serializedEntityArray.add(toJsonObject(entity));
 		}
 		return serializedEntities.toString();
 	}

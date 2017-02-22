@@ -124,7 +124,7 @@ public class FlameEntity {
 		if (values == null) {
 			values = new LinkedList<>();
 		}
-		values.add(new AttributeValue (value == null ? null : value.toString(), type, metadata));
+		values.add(0, new AttributeValue (value == null ? null : value.toString(), type, metadata));
 		this.attributes.put(name, values);
 
 		// Set the geolocation of the entity if the attribute has a geospatial attribute.
