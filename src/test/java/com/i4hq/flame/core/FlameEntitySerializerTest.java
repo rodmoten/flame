@@ -39,8 +39,8 @@ public class FlameEntitySerializerTest {
 		fe.addAttribute("attr2", "s1", AttributeType.STRING);
 		fe.addAttribute("attr2", "s2", AttributeType.STRING);
 		fe.addAttribute("attr3", 3.5, AttributeType.NUMBER, new MetadataItem("marking", "U"));
-		String expected = "{\"id\":\"abcde\",\"longitude\":0.0,\"latitude\":7.77,\"attributes\":[{\"name\":\"attr2\",\"values\":[{\"value\":\"s1\",\"type\":\"STRING\"},"
-				+ "{\"value\":\"s2\",\"type\":\"STRING\"}]},"
+		String expected = "{\"id\":\"abcde\",\"longitude\":0.0,\"latitude\":7.77,\"attributes\":[{\"name\":\"attr2\",\"values\":[{\"value\":\"s2\",\"type\":\"STRING\"},"
+				+ "{\"value\":\"s1\",\"type\":\"STRING\"}]},"
 				+ "{\"name\":\"attr1\",\"values\":[{\"value\":\"8.99\",\"type\":\"NUMBER\"}]},"
 				+ "{\"name\":\"attr3\",\"values\":[{\"value\":\"3.5\",\"type\":\"NUMBER\",\"metadata\":[{\"value\":\"U\",\"name\":\"marking\"}]}]}]}";
 		String actual = serializer.serialize(fe);
@@ -55,8 +55,8 @@ public class FlameEntitySerializerTest {
 		assertEquals("longitude", "-9.5455", actual.getGeospatialPosition().getLongitude() + "");
 
 		assertAttribute("attr1", 0, "NUMBER", "777", 0, actual); 
-		assertAttribute("attr2", 0, "NUMBER", "777", 0, actual); 
-		assertAttribute("attr2", 1, "STRING", "believe", 0, actual); 
+		assertAttribute("attr2", 1, "NUMBER", "777", 0, actual); 
+		assertAttribute("attr2", 0, "STRING", "believe", 0, actual); 
 		
 	}
 	
@@ -67,8 +67,8 @@ public class FlameEntitySerializerTest {
 		assertEquals("geo", null, actual.getGeospatialPosition());
 
 		assertAttribute("attr1", 0, "NUMBER", "777", 0, actual); 
-		assertAttribute("attr2", 0, "NUMBER", "777", 0, actual); 
-		assertAttribute("attr2", 1, "STRING", "believe", 0, actual); 
+		assertAttribute("attr2", 1, "NUMBER", "777", 0, actual); 
+		assertAttribute("attr2", 0, "STRING", "believe", 0, actual); 
 		
 	}
 	
@@ -90,8 +90,8 @@ public class FlameEntitySerializerTest {
 		assertEquals("longitude", "-9.5455", actual.getGeospatialPosition().getLongitude() + "");
 
 		assertAttribute("attr1", 0, "NUMBER", "777", 1, actual); 
-		assertAttribute("attr2", 0, "NUMBER", "777", 2, actual); 
-		assertAttribute("attr2", 1, "STRING", "believe", 0, actual); 
+		assertAttribute("attr2", 1, "NUMBER", "777", 2, actual); 
+		assertAttribute("attr2", 0, "STRING", "believe", 0, actual); 
 		
 	}
 	
