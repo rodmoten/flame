@@ -47,7 +47,7 @@ properties.geometry.angle 1::4:8:9
 		assertEquals("type",expectedType, entity.getType());
 		assertEquals("id","9", entity.getAttribute("id").getValue());
 		assertEquals("properties.attrs.name(properties.attrs.name)","Sector", entity.getAttribute("properties:attrs:name").getValue());
-		
+
 		// attribute not in entity
 		assertEquals("properties.attrs.type(4:10:11)",null, entity.getAttribute("4:10:11"));		
 
@@ -58,7 +58,7 @@ properties.geometry.angle 1::4:8:9
 		StringBuilder jsonText = FileUtil.readFile("src/test/resources/entity-negative-test1.json");
 		FlameEntityFactory.createFromJson(entityIdFactory, jsonText.toString());
 	}
-	
+
 	@Test(expected=IllegalArgumentException.class)
 	public void testCreateFromJson_invalidFieldName() throws IOException {
 		StringBuilder jsonText = FileUtil.readFile("src/test/resources/entity-negative-test2.json");
@@ -68,7 +68,7 @@ properties.geometry.angle 1::4:8:9
 	@Test
 	public void testCreateFromCsv() throws Exception {
 		File csvFile = new File("src/test/resources/few-dummy-entities-with-dups.csv");
-		
+
 		List<FlameEntity> actualEntities = FlameEntityFactory.createFromCsv("entity_id", csvFile, "LONGITUDE", "LATITUDE", false);
 		int expectedNumOfEntities = 5;
 		assertEquals("number of entities", expectedNumOfEntities, actualEntities.size());
@@ -81,7 +81,7 @@ properties.geometry.angle 1::4:8:9
 		String[][] thirdEntity = {{"ANALYST_COMMENTS", "ANALYST_COMMENTS", "NULL"}, {"name", "name","LJUBAN KONSTANTIN STANKIC"}};
 		assertAttribute(0,2,thirdEntity, actualEntities);
 		assertAttribute(1,2,thirdEntity, actualEntities);
-		
+
 		// Assert the last entity
 		String[][] lastEntity = {{"LATITUDE", "LATITUDE", "40.12242653"}, {"name", "name","352 AD BN"}};
 		assertAttribute(0,4,lastEntity, actualEntities);
@@ -89,21 +89,53 @@ properties.geometry.angle 1::4:8:9
 		assertEquals("latitude", 40.12242653 + "", actualEntities.get(4).getGeospatialPosition().getLatitude() + "");
 		assertEquals("longitude", 48.13782394 + "", actualEntities.get(4).getGeospatialPosition().getLongitude() + "");
 
-		
+
 	}
 	@Test
 	public void testAddAttribute_duplicateMetadata() throws Exception {
 		FlameEntity fe = FlameEntityFactory.createEntity("abcde");
 		fe.addAttribute("x", 456, AttributeType.NUMBER, new MetadataItem("abc", "123"), new MetadataItem("egh", "123"), new MetadataItem("hij", "123"));
 		fe.addAttribute("y", 456, AttributeType.NUMBER, new MetadataItem("abc", "123"), new MetadataItem("egh", "123"), new MetadataItem("hij", "123"));
-		
+
 		try {
 			fe.addAttribute("z", 654, AttributeType.NUMBER, new MetadataItem("ijk", "123"), new MetadataItem("pqr", "123"), new MetadataItem("ijk", "123"));
 		} catch (DuplicateMetadataException ex ){
 			assertEquals("ijk", ex.getDuplicateName());
 		}
-}
-	
+	}
+
+	@Test
+	public void testOrderingOfAttributeValues() throws Exception {
+		FlameEntity fe = FlameEntityFactory.createEntity("abcde");
+		fe.addAttribute("x", 1, AttributeType.NUMBER, new Timestamp(1));
+		fe.addAttribute("x", 2, AttributeType.NUMBER, new Timestamp(2));
+		fe.addAttribute("x", 5, AttributeType.NUMBER, new Timestamp(5));
+		fe.addAttribute("x", 3, AttributeType.NUMBER, new Timestamp(3));
+		fe.addAttribute("x", 4, AttributeType.NUMBER, new Timestamp(4));
+
+		assertEquals("5", fe.getAttribute("x").getValue());
+		assertEquals(5, fe.getAttributes("x").size());
+	}
+
+	@Test
+	public void testOrderingOfAttributeValues_defaultTimestemp() throws Exception {
+		FlameEntity fe = FlameEntityFactory.createEntity("abcde");
+		fe.addAttribute("x", 1, AttributeType.NUMBER);
+		Thread.sleep(1);
+		fe.addAttribute("x", 2, AttributeType.NUMBER);
+		Thread.sleep(1);
+		fe.addAttribute("x", 5, AttributeType.NUMBER);
+		Thread.sleep(1);
+		fe.addAttribute("x", 3, AttributeType.NUMBER);
+		Thread.sleep(1);
+		fe.addAttribute("x", 4, AttributeType.NUMBER);
+
+		assertEquals(5, fe.getAttributes("x").size());
+		assertEquals("4", fe.getAttribute("x").getValue());
+	}
+
+
+
 	/**
 	 * @param indexOfExpectedAttribute
 	 * @param indexOfActualEntity
@@ -112,11 +144,11 @@ properties.geometry.angle 1::4:8:9
 	 */
 	private void assertAttribute(int indexOfExpectedAttribute, int indexOfActualEntity, String[][] expectedEntity, List<FlameEntity> actualEntities) {
 		assertEquals(expectedEntity[indexOfExpectedAttribute][0], 
-					actualEntities.get(indexOfActualEntity).getAttribute(expectedEntity[indexOfExpectedAttribute][1]).getValue(), 
-					expectedEntity[indexOfExpectedAttribute][2]);
+				actualEntities.get(indexOfActualEntity).getAttribute(expectedEntity[indexOfExpectedAttribute][1]).getValue(), 
+				expectedEntity[indexOfExpectedAttribute][2]);
 	}
-	
-	
-	
+
+
+
 
 }

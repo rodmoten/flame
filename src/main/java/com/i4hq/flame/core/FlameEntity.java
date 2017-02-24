@@ -21,7 +21,7 @@ public class FlameEntity {
 
 	private static Logger logger = LoggerFactory.getLogger(FlameEntity.class);
 
-	private final Map<String, List<Attribute>> attributes = new HashMap<>();
+	private final Map<String, List<AttributeValue>> attributes = new HashMap<>();
 	public static final char ATTIRBUTE_PATH_SEPARATOR = ':';
 	public static final String ENITY_ID_ATTIRBUTE_PATH_SEPARATOR = "" + ATTIRBUTE_PATH_SEPARATOR + ATTIRBUTE_PATH_SEPARATOR;
 	private final String id;
@@ -121,7 +121,7 @@ public class FlameEntity {
 
 		// Hopefully, we aren't adding attributes and trying to use the hash at the same time.
 		hash = null;
-		List<Attribute> values = this.attributes.get(name);
+		List<AttributeValue> values = this.attributes.get(name);
 		if (values == null) {
 			values = new LinkedList<>();
 		}
@@ -137,7 +137,8 @@ public class FlameEntity {
 			metadataNames = null;
 		}
 		
-		values.add(new Attribute (value == null ? null : value.toString(), type, metadata == null ? new MetadataItem[0] : metadata));
+		AttributeValue attribute = new AttributeValue (value == null ? null : value.toString(), type, metadata == null ? new MetadataItem[0] : metadata);
+		insert(values, attribute);
 
 		this.attributes.put(name, values);
 
@@ -147,6 +148,24 @@ public class FlameEntity {
 		} else if (type == AttributeType.LONGITUDE) {
 			this.setLongitude(((Number) value).doubleValue()); 
 		}
+	}
+
+	/**I
+	 * Insert the attribute into the list of attributes using insertion sort.
+	 * The attributes are arranged in descending order by timestamp.
+	 * @param attributes
+	 * @param attribute
+	 */
+	protected void insert(List<AttributeValue> attributes, AttributeValue attribute) {
+		int n = attributes.size();
+		for (int i = 0; i < n; i++){
+			AttributeValue member = attributes.get(i);
+			if (attribute.getTimestamp() >= member.getTimestamp()){
+				attributes.add(i, attribute);
+				return;
+			}
+		}
+		attributes.add(attribute);		
 	}
 
 	public String getEntityIdPrefix() {
@@ -165,9 +184,9 @@ public class FlameEntity {
 	 * @param attributePath - 
 	 * @return Returns the 1st value  of the attribute. null will be return if the value of the attribute is null or if the entity doesn't contain the attribute.
 	 */
-	public Attribute getAttribute(String attributePath) {
+	public AttributeValue getAttribute(String attributePath) {
 
-		final List<Attribute> list = attributes.get(attributePath);
+		final List<AttributeValue> list = attributes.get(attributePath);
 		return list == null ? null : list.get(0);
 	}
 
@@ -176,15 +195,15 @@ public class FlameEntity {
 	 * @param attributePath - 
 	 * @return Returns all of the values for a given attribute.
 	 */
-	public List<Attribute> getAttributes(String attributePath) {
+	public List<AttributeValue> getAttributes(String attributePath) {
 		return attributes.get(attributePath);
 	}
 	
 
-	public List<Attribute> getAttributesOfSpecificType(final AttributeType targetType) {
-		List<Attribute> values = new LinkedList<>();
-		for (List<Attribute> vs : attributes.values()){
-			for (Attribute v : vs) {
+	public List<AttributeValue> getAttributesOfSpecificType(final AttributeType targetType) {
+		List<AttributeValue> values = new LinkedList<>();
+		for (List<AttributeValue> vs : attributes.values()){
+			for (AttributeValue v : vs) {
 				if (v.getType() == targetType) {
 				}
 				values.add(v);
@@ -216,7 +235,7 @@ public class FlameEntity {
 		StringBuilder b = new StringBuilder();
 		List<String> attributeTypExpression = new LinkedList<>();
 
-		for (Entry<String, List<Attribute>> entry : this.attributes.entrySet()) {
+		for (Entry<String, List<AttributeValue>> entry : this.attributes.entrySet()) {
 			if (entry.getValue() != null) {
 				attributeTypExpression.add(entry.getKey() + ATTRIBUTE_TYPE_EXPR_SEPARATOR + entry.getValue().get(0).getType());
 			}
@@ -237,7 +256,7 @@ public class FlameEntity {
 		if (attributeName == null) {
 			return null;
 		}
-		List<Attribute> value = this.attributes.get(attributeName);
+		List<AttributeValue> value = this.attributes.get(attributeName);
 		if (value == null){
 			return null;
 		}
@@ -255,13 +274,13 @@ public class FlameEntity {
 			}
 			MessageDigest md = MessageDigest.getInstance("MD5");
 			md.update(this.id.getBytes());
-			for (Entry<String, List<Attribute>> attribute : attributes.entrySet()) {
+			for (Entry<String, List<AttributeValue>> attribute : attributes.entrySet()) {
 				md.update(attribute.getKey().getBytes());
-				List<Attribute> values = attribute.getValue();
+				List<AttributeValue> values = attribute.getValue();
 				if (values == null){
 					continue;
 				}
-				for (Attribute av : values){
+				for (AttributeValue av : values){
 					if (av == null) {
 						md.update(new byte[]{'n','u','l','l'});
 					} else {
@@ -294,15 +313,15 @@ public class FlameEntity {
 	 */
 	public JsonObject toJson() {
 		JsonObject jsonObj = new JsonObject();
-		for (Entry<String, List<Attribute>> attribute : attributes.entrySet()) {
-			List<Attribute> attributeValue = attribute.getValue();
+		for (Entry<String, List<AttributeValue>> attribute : attributes.entrySet()) {
+			List<AttributeValue> attributeValue = attribute.getValue();
 			
 			// TODO support lists.
 			if (attributeValue.size() > 1){
 				throw new RuntimeException ("array not supported");
 			}
 			if (attributeValue.size() == 1) {
-				Attribute value = attributeValue.get(0);
+				AttributeValue value = attributeValue.get(0);
 				if (value == null || value.getValue() == null){
 					jsonObj.add(attribute.getKey(), null);
 					continue;
@@ -329,7 +348,7 @@ public class FlameEntity {
 	/**
 	 * @return Returns the attributes of this entity
 	 */
-	public Set<Entry<String, List<Attribute>>> getAttributes() {
+	public Set<Entry<String, List<AttributeValue>>> getAttributes() {
 		return attributes.entrySet();
 	}
 

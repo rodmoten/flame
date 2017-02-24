@@ -73,7 +73,7 @@ public class FlameEntitySerializer {
 		serializedEntity.add("attributes", attributesArray);
 
 		// Add attribute objects to the array in the "attributes" field.
-		for (Entry<String, List<Attribute>> attributeEntry : entity.getAttributes()){
+		for (Entry<String, List<AttributeValue>> attributeEntry : entity.getAttributes()){
 			JsonObject attributeObj = new JsonObject();
 			attributesArray.add(attributeObj);
 			
@@ -84,8 +84,8 @@ public class FlameEntitySerializer {
 			attributeObj.add("values", valueArray);
 			
 			// Convert list of attribute values to a JSON array of attribute values
-			List<Attribute> attributeValues = attributeEntry.getValue();
-			for (Attribute av : attributeValues){
+			List<AttributeValue> attributeValues = attributeEntry.getValue();
+			for (AttributeValue av : attributeValues){
 				JsonObject valueObj = new JsonObject();
 				valueObj.addProperty("value", av.getValue());
 				valueObj.addProperty("type", av.getType().toString());

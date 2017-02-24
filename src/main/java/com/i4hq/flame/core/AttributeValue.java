@@ -10,20 +10,26 @@ import java.util.List;
  * @author rmoten
  *
  */
-public class Attribute {
+public class AttributeValue {
 	private final String value;
 	private final AttributeType type;
 	private final List<MetadataItem> metadata = new LinkedList<MetadataItem>();
+	private long timestamp = System.currentTimeMillis();
 	/**
 	 * @param value
 	 * @param type
 	 */
-	Attribute(String value, AttributeType type, MetadataItem ...metadata) {
+	AttributeValue(String value, AttributeType type, MetadataItem ...metadata) {
 		super();
 		this.value = value;
 		this.type = type;
+		
+		// Timestamp and kind are metadata with specific semantics. Therefore we need to look if any of the metadata is one of them.
 		for (MetadataItem md : metadata){
 			this.metadata.add(md);
+			if (md instanceof Timestamp){
+				this.timestamp = ((Timestamp) md).getTimestamp();
+			}
 		}
 	}
 	/**
@@ -60,7 +66,7 @@ public class Attribute {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Attribute other = (Attribute) obj;
+		AttributeValue other = (AttributeValue) obj;
 		if (type != other.type)
 			return false;
 		if (value == null) {
@@ -83,6 +89,9 @@ public class Attribute {
 	}
 	public List<MetadataItem> getMetadata() {
 		return metadata;
+	}
+	public long getTimestamp() {
+		return timestamp;
 	}
 	
 	
