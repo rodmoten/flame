@@ -8,9 +8,6 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.i4hq.flame.core.EntityIdFactory;
-import com.i4hq.flame.core.FlameEntity;
-import com.i4hq.flame.core.FlameEntityFactory;
 import com.i4hq.flame.core.util.FileUtil;
 import com.i4hq.flame.in_memory.InMemoryEntityIdFactory;
 

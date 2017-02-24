@@ -81,7 +81,7 @@ public class AttributeValue {
 	 */
 	@Override
 	public String toString() {
-		return String.format("AttributeValue [value=%s, type=%s]", value, type);
+		return String.format("AttributeValue [value=%s, type=%s, ts=%s]", value, type, timestamp);
 	}
 	
 	public void addMetadata (String name , String value){

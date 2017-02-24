@@ -9,6 +9,10 @@ public class Timestamp extends MetadataItem {
 		this.timestamp = ts;
 	}
 	
+	public Timestamp(Long ts) {
+		this(ts == null ? System.currentTimeMillis() : ts);
+	}
+	
 	public Timestamp() {
 		this(System.currentTimeMillis());
 	}
