@@ -3,10 +3,10 @@
   "id": "9",
   "name": "default",
   "properties": {
-    "report": true,
+    "report": [true, false, false, true],
     "style": "font",
     "attrs": {
-      "type": [3,5,7],
+      "type": [{"num" : [3,4]}, {"num" : [5,6]}, {"num" : [7,8]}],
       "name": "Sector"
     },
     "geometry": {

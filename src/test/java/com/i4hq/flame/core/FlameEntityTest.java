@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.Test;
@@ -50,15 +51,26 @@ properties.geometry.angle 1::4:8:9
 
 	}
 
-	@Test(expected=IllegalArgumentException.class)
+	@Test
 	public void testCreateFromJson_arrays() throws Exception {
-		StringBuilder jsonText = FileUtil.readFile("src/test/resources/entity-negative-test1.json");
-		FlameEntityFactory.createFromJson(entityIdFactory, jsonText.toString());
+		StringBuilder jsonText = FileUtil.readFile("src/test/resources/entity-negative-test2.json");
+			FlameEntity fe = FlameEntityFactory.createFromJson(entityIdFactory, jsonText.toString());
+			List<AttributeValue> actual = fe.getAttributes("properties:attrs:type:num");
+			List<String> actualValues = new LinkedList<>();
+			for (AttributeValue v : actual){
+				actualValues.add(v.getValue());
+			}
+			String[] expectedValues = {"3", "4", "5", "6", "7", "8"};
+			assertEquals("size", expectedValues.length, actualValues.size());
+			for(String expected : expectedValues){
+				assertEquals("does not contain " + expected, true, actualValues.contains(expected));
+			}
+
 	}
 
 	@Test(expected=IllegalArgumentException.class)
 	public void testCreateFromJson_invalidFieldName() throws IOException {
-		StringBuilder jsonText = FileUtil.readFile("src/test/resources/entity-negative-test2.json");
+		StringBuilder jsonText = FileUtil.readFile("src/test/resources/entity-negative-test1.json");
 		FlameEntityFactory.createFromJson(entityIdFactory, jsonText.toString());
 	}
 

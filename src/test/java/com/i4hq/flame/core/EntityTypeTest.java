@@ -43,6 +43,15 @@ public class EntityTypeTest {
 		fissure.addAttribute("reference", "http://some.io", AttributeType.REFERENCE, new MetadataItem("frog", "feet"));
 		assertEquals(false, type1.hasType(fissure));
 	}
+	
+	@Test
+	public void testHasType_emptyList() {
+		String entityInJson = "{'string1':'abcd', 'boolean':[], 'string2':'xyz', 'number':45}";
+
+		FlameEntity fissure = FlameEntityFactory.createFromJson(GuidEntityIdFactory.getInstance(), entityInJson);
+		fissure.addAttribute("reference", "http://some.io", AttributeType.REFERENCE, new MetadataItem("frog", "feet"));
+		assertEquals(false, type1.hasType(fissure));
+	}
 
 
 	@Test

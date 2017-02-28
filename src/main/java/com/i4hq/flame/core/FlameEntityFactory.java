@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -79,10 +80,10 @@ public class FlameEntityFactory {
 		// Create a reader to read each line.
 		CSVReader reader = new CSVReader(new FileReader(csvFile));
 		List<FlameEntity> entities = new LinkedList<>();
-	
+
 		// We use this variable to ensure we only get one entity for each entity ID. 
 		Set<String> readEntities = new HashSet<>();
-	
+
 		try {
 			int lineNumber = 1;
 			// Get the columns.
@@ -93,7 +94,7 @@ public class FlameEntityFactory {
 				logger.error("The first line doesn't contain the column headers in  {}", csvFile);
 				throw new RuntimeException("No columns in CSV");
 			}
-	
+
 			// For some reason, the first character in the CSV is 65279. As a result, we remove it from the first column header.
 			if (columns[0].charAt(0) == 65279){
 				columns[0] = columns[0].substring(1);
@@ -118,7 +119,7 @@ public class FlameEntityFactory {
 			if (entityIdColumnIndex < 0) {
 				throw new RuntimeException(String.format("Entity ID column '%s' not present in '%s'", entityIdColumn, csvFile.getAbsolutePath()));
 			}
-	
+
 			// Create an entity for each line.
 			String[] nextLine;
 			while ((nextLine = reader.readNext()) != null) {
@@ -135,19 +136,19 @@ public class FlameEntityFactory {
 				FlameEntity entity = createEntity(entityId);
 				Double longitude = null;
 				Double latitude = null;
-				
+
 				// skip the entity if another entity with the same ID was previously read.
 				if (readEntities.contains(entity.getId())) {
 					continue;
 				}
-				
+
 				for (int i = 0; i < numOfColumns; i++){
 					// Don't make the entity ID an attribute
 					if (i == entityIdColumnIndex) {
 						continue;
 					}
 					String attributeId = attributeIds[i];
-	
+
 					String attributeName = createAttributePathName(null, attributeId);
 					String value = nextLine[i];
 					// In some CSV files, the word NULL means the value should be NULL.
@@ -155,14 +156,14 @@ public class FlameEntityFactory {
 						value = null;
 					}
 					entity.addAttribute(attributeName, value, AttributeType.STRING);
-					
+
 					// Save the value of the attribute, if it is attribute  the longitude or latitude attribute.
 					if (longitudeColumnIndex == i) {
 						longitude = parseDouble(value);
 					} else if (latitudeColumnIndex == i){
 						latitude = parseDouble(value);
 					}
-					
+
 				}
 				// If row has a lat and long for the entity, then use them as the entity's location.
 				if(longitude != null && latitude !=null) {
@@ -170,20 +171,20 @@ public class FlameEntityFactory {
 				}
 				readEntities.add(entity.getId());
 				entities.add(entity);
-	
+
 			}
 		} catch (IOException ex) {
 			logger.error("Error reading CSV file: {}", csvFile);
 			throw ex;
 		}
-	
+
 		finally {
 			reader.close();
 		}
-	
-	
+
+
 		return entities;
-	
+
 	}
 
 	/**
@@ -209,10 +210,10 @@ public class FlameEntityFactory {
 		Stack<String> parentPath = new Stack<>();
 		FlameEntity entity = new FlameEntity(entityIdFactory.createId(jsonText));
 		Gson gson = gsonBuilder.create();
-	
+
 		JsonObject jsonObj = gson.fromJson(jsonText, JsonObject.class);
 		createFromJson(entity, entityIdFactory, parentPath, jsonObj);
-	
+
 		return entity;
 	}
 
@@ -225,42 +226,62 @@ public class FlameEntityFactory {
 	 */
 	private static void createFromJson(FlameEntity entity, EntityIdFactory entityIdFactory,
 			Stack<String> parentPath, JsonObject jsonObj) {
-	
-	
+
+
 		for (Entry<String, JsonElement> jsonElement : jsonObj.entrySet()) {
 			// Get the attribute name 
 			String attributeName = jsonElement.getKey();
 			if (!validAttributeName(attributeName)) {
 				throw new IllegalArgumentException (String.format("Attribute name is not valid: '{}'", attributeName));
 			}
-	
+
 			// Get the attribute value. 
 			JsonElement attributeValue = jsonElement.getValue();
-			//TODO handle arrays
 			if (attributeValue.isJsonArray()) {
-				throw new IllegalArgumentException ("JSON must not contain any arrays");
-			}
-			boolean isScalar = attributeValue.isJsonPrimitive() || attributeValue.isJsonNull();
-			String attributeId = attributeName;
-	
-			// If this is a primitive JSON element, then add it to the entity.
-			if (isScalar) {
-				String attributePathName = createAttributePathName(parentPath, attributeId);
-				if (attributeValue.isJsonNull()) {
-					entity.addAttribute(attributePathName, null, getAttributeTypeOfScalarValue(null));
-				} else {
-					entity.addAttribute(attributePathName,attributeValue.getAsString(), getAttributeTypeOfScalarValue(attributeValue.getAsJsonPrimitive()));
+				// Add the JSON element's attribute ID to the stack and continue with each of the elements of the array.
+				Iterator<JsonElement> iterator = attributeValue.getAsJsonArray().iterator();
+				while (iterator.hasNext()){
+					JsonElement arrayElement = iterator.next();
+					if (isScalar(arrayElement)){
+						addAttribute(entity, parentPath, attributeName, arrayElement);
+					}
+					else {
+						parentPath.push(attributeName);
+						createFromJson (entity, entityIdFactory, parentPath, arrayElement.getAsJsonObject());
+					}
 				}
 			} else {
-				// Add the JSON element's attribute ID to the stack and continue with its children.
-				parentPath.push(attributeId);
-				createFromJson (entity, entityIdFactory, parentPath, attributeValue.getAsJsonObject());
+				boolean isScalar = isScalar(attributeValue);
+				String attributeId = attributeName;
+
+				// If this is a primitive JSON element, then add it to the entity.
+				if (isScalar) {
+					addAttribute(entity, parentPath, attributeId, attributeValue);
+				} else {
+					// Add the JSON element's attribute ID to the stack and continue with its children.
+					parentPath.push(attributeId);
+					createFromJson (entity, entityIdFactory, parentPath, attributeValue.getAsJsonObject());
+				}
 			}
 		}
 		if (!parentPath.empty()) {
 			parentPath.pop();
 		}
-	
+
+	}
+
+	private static boolean isScalar(JsonElement attributeValue) {
+		return attributeValue.isJsonPrimitive() || attributeValue.isJsonNull();
+	}
+
+	private static void addAttribute(FlameEntity entity, Stack<String> parentPath, String attributeId,
+			JsonElement attributeValue) {
+		String attributePathName = createAttributePathName(parentPath, attributeId);
+		if (attributeValue.isJsonNull()) {
+			entity.addAttribute(attributePathName, null, getAttributeTypeOfScalarValue(null));
+		} else {
+			entity.addAttribute(attributePathName,attributeValue.getAsString(), getAttributeTypeOfScalarValue(attributeValue.getAsJsonPrimitive()));
+		}
 	}
 
 	/**
@@ -279,7 +300,7 @@ public class FlameEntityFactory {
 		}
 		// Should be a JSON string or a JSON null.
 		return AttributeType.STRING;
-	
+
 	}
 
 	/**
@@ -320,7 +341,7 @@ public class FlameEntityFactory {
 			attributePathName.append(FlameEntity.ATTIRBUTE_PATH_SEPARATOR);
 		}
 		attributePathName.append(attributeId);
-	
+
 		return attributePathName.toString();
 	}
 
