@@ -348,7 +348,7 @@ public class FlameEntity {
 	/**
 	 * @return Returns the attributes of this entity
 	 */
-	Set<Entry<String, List<AttributeValue>>> getAttributes() {
+	public Set<Entry<String, List<AttributeValue>>> getAttributes() {
 		return attributes.entrySet();
 	}
 
