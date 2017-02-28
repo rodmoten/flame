@@ -129,6 +129,9 @@ public class FlameEntity {
 		if (metadata != null) {
 			Set<String> metadataNames = new HashSet<>();
 			for (MetadataItem md : metadata){
+				if (md == null){
+					continue;
+				}
 				if(!metadataNames.add(md.getName())){
 					throw new DuplicateMetadataException(md.getName());
 				}
