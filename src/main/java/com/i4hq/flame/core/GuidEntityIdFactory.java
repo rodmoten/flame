@@ -12,7 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This entity ID factory uses the Java GUID as the entity ID.
+ * This entity ID factory uses the Java GUID as the entity ID or the MD5 hash of a string.
  * @author rmoten
  *
  */

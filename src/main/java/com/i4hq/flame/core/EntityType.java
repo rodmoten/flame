@@ -4,13 +4,22 @@
 package com.i4hq.flame.core;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Set;
 
 /**
  * @author rmoten
  *
  */
 public class EntityType {
+	private static Logger logger = LoggerFactory.getLogger(EntityType.class);
+	
 	private final Map<String, AttributeType> attributeDecls = new HashMap<>();
 
 	private final long age;
@@ -65,4 +74,34 @@ public class EntityType {
 	public AttributeDecl getFirstDecl() {
 		return firstDecl;
 	}	
+	
+	public boolean hasType(FlameEntity entity){
+		Set<Entry<String, List<AttributeValue>>> attributes = entity.getAttributes();
+		// The entity's attributes must be a superset of the entity type's attributes.
+		if (attributes.size() < attributeDecls.size()) {
+			return false;
+		}
+		
+		for (Entry<String, AttributeType> decl : attributeDecls.entrySet()){
+			final String attributeName = decl.getKey();
+			List<AttributeValue> values = entity.getAttributes(attributeName);
+			
+			if (values == null || values.isEmpty()){
+				logger.debug("Not in type because null or empty list for attribute {}", attributeName);
+				return false;
+			}
+			
+			AttributeType declaredTyped = decl.getValue();
+			for (AttributeValue value : values){
+				if (value == null){
+					continue;
+				}
+				if (value.getType() != declaredTyped){
+					return false;
+				}
+			}
+		}
+		return true;
+		
+	}
 }
