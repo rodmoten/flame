@@ -13,6 +13,15 @@ public class MetadataItem {
 	
 	public MetadataItem(String name, String value) {
 		super();
+		if (name == null){
+			throw new IllegalArgumentException("name of metadata item cannot be null");
+			
+		}
+		
+		if (value == null){
+			throw new IllegalArgumentException("value of metadata item cannot be null");
+			
+		}
 		this.name = name;
 		this.value = value;
 	}

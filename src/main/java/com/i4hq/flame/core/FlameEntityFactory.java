@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Stack;
@@ -345,4 +346,21 @@ public class FlameEntityFactory {
 		return attributePathName.toString();
 	}
 
+	/**
+	 * Create a metadata array from a metadata map.
+	 * @param metadataMap
+	 * @return Returns a metadata array
+	 */
+	public static MetadataItem[] createMeatadat(Map<String, String> metadataMap) {
+		if (metadataMap == null){
+			return new MetadataItem[0];
+		}
+		MetadataItem[] metadata = new MetadataItem[metadataMap.size()];
+		int i = 0;
+		for (Entry<String, String> entry : metadataMap.entrySet()){
+			metadata[i] = new MetadataItem(entry.getKey(), entry.getValue());
+			i++;
+		}
+		return metadata;
+	}
 }
