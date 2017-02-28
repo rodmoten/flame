@@ -7,11 +7,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Set;
 
 /**
  * @author rmoten
@@ -51,6 +50,19 @@ public class EntityType {
 	public EntityType(AttributeDecl ... attributeDecls) {
 		this(0, attributeDecls);
 	}
+	
+	/**
+	 * Create a new entity type by prepended newRoot to each attribute name in the attribute decls of the given entity type.
+	 * @param other
+	 * @param newRoot
+	 */
+	public EntityType (EntityType other, String newRoot){
+		for (Entry<String, AttributeType> decl : other.attributeDecls.entrySet()){
+			this.attributeDecls.put(newRoot + FlameEntity.ATTIRBUTE_PATH_SEPARATOR + decl.getKey(), decl.getValue());
+		}
+		this.age = 0;
+		this.firstDecl = other.getFirstDecl();
+	}
 
 	/**
 	 * @return the age
@@ -58,7 +70,6 @@ public class EntityType {
 	public long getAge() {
 		return age;
 	}
-
 
 	public int numOfAttributes() {
 		return attributeDecls.size();

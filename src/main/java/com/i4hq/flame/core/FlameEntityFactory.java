@@ -213,8 +213,21 @@ public class FlameEntityFactory {
 		Gson gson = gsonBuilder.create();
 
 		JsonObject jsonObj = gson.fromJson(jsonText, JsonObject.class);
-		createFromJson(entity, entityIdFactory, parentPath, jsonObj);
+		createFromJson(entity, parentPath, jsonObj);
 
+		return entity;
+	}
+	
+	/**
+	 * Create a Flame Entity from a JSON Object. The entity will have the given entity ID.
+	 * @param entityId
+	 * @param jsonObj
+	 * @return Returns a non-null Flame Entity whose attributes will constructed from the JSON object.
+	 */
+	public static FlameEntity createFromJson(String entityId, JsonObject jsonObj) {
+		Stack<String> parentPath = new Stack<>();
+		FlameEntity entity = new FlameEntity(entityId);
+		createFromJson(entity, parentPath, jsonObj);
 		return entity;
 	}
 
@@ -225,8 +238,7 @@ public class FlameEntityFactory {
 	 * @param parentPath
 	 * @param jsonObj
 	 */
-	private static void createFromJson(FlameEntity entity, EntityIdFactory entityIdFactory,
-			Stack<String> parentPath, JsonObject jsonObj) {
+	private static void createFromJson(FlameEntity entity, 	Stack<String> parentPath, JsonObject jsonObj) {
 
 
 		for (Entry<String, JsonElement> jsonElement : jsonObj.entrySet()) {
@@ -248,7 +260,7 @@ public class FlameEntityFactory {
 					}
 					else {
 						parentPath.push(attributeName);
-						createFromJson (entity, entityIdFactory, parentPath, arrayElement.getAsJsonObject());
+						createFromJson (entity, parentPath, arrayElement.getAsJsonObject());
 					}
 				}
 			} else {
@@ -261,7 +273,7 @@ public class FlameEntityFactory {
 				} else {
 					// Add the JSON element's attribute ID to the stack and continue with its children.
 					parentPath.push(attributeId);
-					createFromJson (entity, entityIdFactory, parentPath, attributeValue.getAsJsonObject());
+					createFromJson (entity, parentPath, attributeValue.getAsJsonObject());
 				}
 			}
 		}
@@ -363,4 +375,6 @@ public class FlameEntityFactory {
 		}
 		return metadata;
 	}
+
+	
 }

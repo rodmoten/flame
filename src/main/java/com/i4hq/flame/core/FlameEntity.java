@@ -377,4 +377,14 @@ public class FlameEntity {
 	public String getReference(String referenceName) {
 		return null;
 	}
+
+	/**
+	 * Get the attributes whose path begins with the given string. 
+	 * @param string
+	 * @return
+	 */
+	public Map<String, String> getAttributesWithPrefix(String string) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

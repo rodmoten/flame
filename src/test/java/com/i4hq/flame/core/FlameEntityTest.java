@@ -54,17 +54,24 @@ properties.geometry.angle 1::4:8:9
 	@Test
 	public void testCreateFromJson_arrays() throws Exception {
 		StringBuilder jsonText = FileUtil.readFile("src/test/resources/entity-negative-test2.json");
-			FlameEntity fe = FlameEntityFactory.createFromJson(entityIdFactory, jsonText.toString());
-			List<AttributeValue> actual = fe.getAttributes("properties:attrs:type:num");
-			List<String> actualValues = new LinkedList<>();
-			for (AttributeValue v : actual){
-				actualValues.add(v.getValue());
-			}
-			String[] expectedValues = {"3", "4", "5", "6", "7", "8"};
-			assertEquals("size", expectedValues.length, actualValues.size());
-			for(String expected : expectedValues){
-				assertEquals("does not contain " + expected, true, actualValues.contains(expected));
-			}
+		FlameEntity fe = FlameEntityFactory.createFromJson(entityIdFactory, jsonText.toString());
+		List<AttributeValue> actual = fe.getAttributes("properties:attrs:type:num");
+		List<String> actualValues = new LinkedList<>();
+		for (AttributeValue v : actual){
+			actualValues.add(v.getValue());
+		}
+		String[] expectedValues = {"3", "4", "5", "6", "7", "8"};
+		assertEquals("size", expectedValues.length, actualValues.size());
+		for(String expected : expectedValues){
+			assertEquals("does not contain " + expected, true, actualValues.contains(expected));
+		}
+
+	}
+
+	@Test(expected=com.google.gson.JsonSyntaxException.class)
+	public void testCreateFromJson_json_object_is_an_array() throws Exception {
+		StringBuilder jsonText = FileUtil.readFile("src/test/resources/json-object-is-an-array.json");
+		FlameEntityFactory.createFromJson(entityIdFactory, jsonText.toString());
 
 	}
 
