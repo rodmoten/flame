@@ -185,7 +185,9 @@ public class AttributeExpression {
 	}
 
 	/**
-	 * @return the coordinates
+	 * Get the coordinates. The first and last point are always equal.
+	 * If the coordinates are the points  coordinates are 
+	 * @return Returns the coordinates
 	 */
 	public Geo2DPoint[] getCoordinates() {
 		return coordinates;
