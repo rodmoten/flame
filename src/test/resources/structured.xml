@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<shiporder orderid="889923" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="shiporder.xsd">
+	<orderperson>John Smith</orderperson>
+	<shipto>
+		<name>Ola Nordmann</name>
+		<address>
+			<street>Langgt</street>
+			<number>23</number>
+			<city>4000 Stavanger</city>
+			<country>
+				<item>
+					<title>Empire Burlesque</title>
+					<note>
+						<item>
+							<title>Empire Burlesque</title>
+							<note>Special Edition</note>
+							<quantity>1</quantity>
+							<price>10.90</price>
+						</item>
+					</note>
+					<quantity>1</quantity>
+					<price>10.90</price>
+				</item>
+			</country>
+		</address>
+	</shipto>
+</shiporder>
+
+
+
+

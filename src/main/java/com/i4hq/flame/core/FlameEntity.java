@@ -21,11 +21,9 @@ public class FlameEntity {
 
 	private static Logger logger = LoggerFactory.getLogger(FlameEntity.class);
 
-	private final Map<String, List<AttributeValue>> attributes = new HashMap<>();
+	private final Map<String, List<AttributeValue>> attributes;
 	public static final char ATTIRBUTE_PATH_SEPARATOR = ':';
-	public static final String ENITY_ID_ATTIRBUTE_PATH_SEPARATOR = "" + ATTIRBUTE_PATH_SEPARATOR + ATTIRBUTE_PATH_SEPARATOR;
 	private final String id;
-	private final String entityIdPrefix;
 	public static final String ATTRIBUTE_TYPE_EXPR_SEPARATOR = ":::";
 	private Geo2DPoint geospatialPosition;
 	private String hash = "";
@@ -33,7 +31,18 @@ public class FlameEntity {
 
 	protected FlameEntity(String id) {
 		this.id = id;
-		entityIdPrefix = id + ENITY_ID_ATTIRBUTE_PATH_SEPARATOR;
+		attributes = new HashMap<>();
+	}
+	
+	/**
+	 * Shares attributes between two entities.
+	 * Use with caution.
+	 * @param id
+	 * @param other
+	 */
+	FlameEntity(String id, FlameEntity other){
+		this.id = id;
+		this.attributes = other.attributes;
 	}
 
 	/* (non-Javadoc)
@@ -169,10 +178,6 @@ public class FlameEntity {
 			}
 		}
 		attributes.add(attribute);		
-	}
-
-	public String getEntityIdPrefix() {
-		return entityIdPrefix ;
 	}
 
 	/**

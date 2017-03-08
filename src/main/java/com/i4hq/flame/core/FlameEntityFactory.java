@@ -15,6 +15,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Stack;
 
+import javax.xml.stream.XMLStreamException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -229,6 +231,17 @@ public class FlameEntityFactory {
 		FlameEntity entity = new FlameEntity(entityId);
 		createFromJson(entity, parentPath, jsonObj);
 		return entity;
+	}
+	
+	/**
+	 * @param sourceFileName - path name of the source XML file.
+	 * @param attributePathOfId - The path of the attribute in the input file to use as the ID.
+	 * @return Returns a Flame Entity
+	 * @throws IOException 
+	 * @throws XMLStreamException 
+	 */
+	public static FlameEntity createFromXml(String sourceFileName, String attributePathOfId) throws XMLStreamException, IOException{
+		return XmlToFlameEntityTransformer.getInstance().process(sourceFileName, attributePathOfId);
 	}
 
 	/**
