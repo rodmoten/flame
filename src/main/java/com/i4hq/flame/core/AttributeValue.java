@@ -26,6 +26,9 @@ public class AttributeValue {
 		
 		// Timestamp and kind are metadata with specific semantics. Therefore we need to look if any of the metadata is one of them.
 		for (MetadataItem md : metadata){
+			if (md == null) {
+				continue;
+			}
 			this.metadata.add(md);
 			if (md instanceof Timestamp){
 				this.timestamp = ((Timestamp) md).getTimestamp();
@@ -81,12 +84,27 @@ public class AttributeValue {
 	 */
 	@Override
 	public String toString() {
-		return String.format("AttributeValue [value=%s, type=%s, ts=%s]", value, type, timestamp);
+		return String.format("AttributeValue [value=%s, type=%s, ts=%s, metadata=%s]", value, type, timestamp, metadata);
 	}
 	
 	public void addMetadata (String name , String value){
 		this.metadata.add(new MetadataItem(name, value));
 	}
+	
+	/**
+	 * @param name
+	 * @return Returns the value of the metadata item with the given name. Null is returned if no metadata item exists.
+	 */
+	public String getMetadataValue(String name){
+		for (MetadataItem m : metadata){
+			if (m.getName().equals(name)){
+				return m.getValue();
+			}
+		}
+		return null;
+	}
+	
+	@Deprecated
 	public List<MetadataItem> getMetadata() {
 		return metadata;
 	}

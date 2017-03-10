@@ -33,4 +33,15 @@ public class MetadataItem {
 	public String getValue() {
 		return value;
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("MetadataItem [name=");
+		builder.append(name);
+		builder.append(", value=");
+		builder.append(value);
+		builder.append("]");
+		return builder.toString();
+	}
 }

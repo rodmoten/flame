@@ -22,8 +22,6 @@ public class EntityType {
 	private final Map<String, AttributeType> attributeDecls = new HashMap<>();
 
 	private final long age;
-
-	private final AttributeDecl firstDecl;
 	
 	/**
 	 * @param attributeDecls
@@ -33,10 +31,8 @@ public class EntityType {
 		super();
 		this.age = 0;
 		if (attributeDecls == null) {
-			firstDecl = null;
 			return;
 		}
-		firstDecl = attributeDecls.length == 0 ? null : attributeDecls[0];
 		for (AttributeDecl d : attributeDecls){
 			this.attributeDecls.put(d.getName(), d.getType());
 		}
@@ -61,7 +57,6 @@ public class EntityType {
 			this.attributeDecls.put(newRoot + FlameEntity.ATTIRBUTE_PATH_SEPARATOR + decl.getKey(), decl.getValue());
 		}
 		this.age = 0;
-		this.firstDecl = other.getFirstDecl();
 	}
 
 	/**
@@ -81,11 +76,6 @@ public class EntityType {
 	}
 
 
-
-	public AttributeDecl getFirstDecl() {
-		return firstDecl;
-	}	
-	
 	public boolean hasType(FlameEntity entity){
 		Set<Entry<String, List<AttributeValue>>> attributes = entity.getAttributes();
 		// The entity's attributes must be a superset of the entity type's attributes.
@@ -114,5 +104,19 @@ public class EntityType {
 		}
 		return true;
 		
+	}
+
+	/**
+	 * @return Returns the names of the attributes in the attribute decl. 
+	 * If the type doesn't have any attribute decls then an empty set is returned. Null is never returned.
+	 */
+	public Set<String> getAttributeNames() {
+		return this.attributeDecls.keySet();
+	}
+
+
+
+	public AttributeType getAttributeType(String name) {
+		return attributeDecls.get(name);
 	}
 }
