@@ -60,7 +60,18 @@ public class FlameEntityFactory {
 	 * @return A new Flame Entity without any attributes.
 	 */
 	public static FlameEntity createEntity(String entityId) {
-		FlameEntity entity = new FlameEntity(entityId);
+		return createEntity(entityId, System.currentTimeMillis());
+	}
+	
+	/**
+	 * Create a new Flame Entity object.
+	 * @param id - ID of the new entity
+	 * @param ts - timestamp in milliseconds (Epoch)
+	 * @return
+	 */
+	public static FlameEntity createEntity(String id, long ts) {
+		FlameEntity entity = new FlameEntity(id);
+		entity.setTimestamp(ts);
 		return entity;
 	}
 
@@ -388,6 +399,7 @@ public class FlameEntityFactory {
 		}
 		return metadata;
 	}
+
 
 	
 }

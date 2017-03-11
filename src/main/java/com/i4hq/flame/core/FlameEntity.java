@@ -27,6 +27,7 @@ public class FlameEntity {
 	public static final String ATTRIBUTE_TYPE_EXPR_SEPARATOR = ":::";
 	private Geo2DPoint geospatialPosition;
 	private String hash = "";
+	private long timestamp = System.currentTimeMillis();
 
 
 	protected FlameEntity(String id) {
@@ -394,5 +395,16 @@ public class FlameEntity {
 	public Map<String, String> getAttributesWithPrefix(String string) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	/**
+	 * @return Returns the timestamp of the entity
+	 */
+	public long getTimestamp() {
+		return timestamp;
+	}
+
+	void setTimestamp(long timestamp) {
+		this.timestamp = timestamp;
 	}
 }
