@@ -29,7 +29,7 @@ public class EntityType {
 	 */
 	public EntityType(long age, AttributeDecl ... attributeDecls) {
 		super();
-		this.age = 0;
+		this.age = age;
 		if (attributeDecls == null) {
 			return;
 		}
