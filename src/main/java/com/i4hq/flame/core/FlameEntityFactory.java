@@ -6,6 +6,7 @@ package com.i4hq.flame.core;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -63,6 +64,8 @@ public class FlameEntityFactory {
 		return createEntity(entityId, System.currentTimeMillis());
 	}
 	
+	
+	
 	/**
 	 * Create a new Flame Entity object.
 	 * @param id - ID of the new entity
@@ -72,6 +75,17 @@ public class FlameEntityFactory {
 	public static FlameEntity createEntity(String id, long ts) {
 		FlameEntity entity = new FlameEntity(id);
 		entity.setTimestamp(ts);
+		return entity;
+	}
+	
+	/**
+	 * Create a new Flame Entity object from another Flame Entity.
+	 * @param other - 
+	 * @param id - ID of the new entity
+	 * @return Returns a new entity that shares attributes with the given attribute.
+	 */
+	public static FlameEntity createEntity(FlameEntity other, String id) {
+		FlameEntity entity = new FlameEntity(id, other);
 		return entity;
 	}
 
@@ -254,6 +268,18 @@ public class FlameEntityFactory {
 	public static FlameEntity createFromXml(String sourceFileName, String attributePathOfId) throws XMLStreamException, IOException{
 		return XmlToFlameEntityTransformer.getInstance().process(sourceFileName, attributePathOfId);
 	}
+	
+	/**
+	 * @param source - XML
+	 * @param attributePathOfId - The path of the attribute in the input file to use as the ID.
+	 * @return Returns a Flame Entity
+	 * @throws XMLStreamException
+	 * @throws IOException
+	 */
+	public static FlameEntity createFromXml(Reader source, String attributePathOfId) throws XMLStreamException, IOException{
+		return XmlToFlameEntityTransformer.getInstance().process(source, attributePathOfId);
+	}
+	
 
 	/**
 	 * @param entity

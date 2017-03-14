@@ -2,6 +2,7 @@ package com.i4hq.flame.core;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.Reader;
 import java.util.Stack;
 
 import javax.xml.stream.XMLEventReader;
@@ -37,8 +38,17 @@ public class XmlToFlameEntityTransformer {
 	}
 
 
-	public FlameEntity process(String inputFile, String attributePathOfId) throws XMLStreamException, IOException {
+	FlameEntity process(String inputFile, String attributePathOfId) throws XMLStreamException, IOException {
 		XMLEventReader reader = createReader(inputFile);
+		return process(reader, attributePathOfId);
+	}
+	
+	FlameEntity process(Reader inputReader, String attributePathOfId) throws XMLStreamException, IOException {
+		XMLEventReader reader = factory.createXMLEventReader(inputReader);
+		return process(reader, attributePathOfId);
+	}
+	
+	private FlameEntity process(XMLEventReader reader, String attributePathOfId) throws XMLStreamException, IOException {
 		try {
 			return extractElements(reader, attributePathOfId);
 		} finally{
@@ -47,21 +57,9 @@ public class XmlToFlameEntityTransformer {
 	}
 
 	protected XMLEventReader createReader (String filename) throws XMLStreamException, IOException {
-		//		BufferedReader reader = new BufferedReader (new FileReader (filename));
-		//		StringBuilder xml = new StringBuilder();
-		//		while (reader.ready()){
-		//			String readLine = reader.readLine().replace("\n", "");
-		//			xml.append(readLine);
-		//		}
-		//		reader.close();
-		//		StringReader sr = new StringReader(xml.toString());
-		//		factory.createXMLEventReader(sr);
 		XMLEventReader xmlr = factory.createXMLEventReader(filename,
 				new FileInputStream(filename));
-
-		// when XMLStreamReader is created, 
-		// it is positioned at START_DOCUMENT event.
-		// Therefore, read pass it.		
+	
 		return xmlr;
 	}
 
