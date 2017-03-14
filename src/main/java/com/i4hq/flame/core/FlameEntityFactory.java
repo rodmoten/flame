@@ -15,6 +15,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Stack;
 
+import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
 
 import org.slf4j.Logger;
@@ -254,6 +255,11 @@ public class FlameEntityFactory {
 	public static FlameEntity createFromXml(String sourceFileName, String attributePathOfId) throws XMLStreamException, IOException{
 		return XmlToFlameEntityTransformer.getInstance().process(sourceFileName, attributePathOfId);
 	}
+	
+	public static FlameEntity createFromXml(XMLEventReader source, String attributePathOfId) throws XMLStreamException, IOException{
+		return XmlToFlameEntityTransformer.getInstance().process(source, attributePathOfId);
+	}
+	
 
 	/**
 	 * @param entity
