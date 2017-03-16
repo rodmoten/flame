@@ -173,7 +173,7 @@ public class FlameEntity {
 		int n = attributes.size();
 		for (int i = 0; i < n; i++){
 			AttributeValue member = attributes.get(i);
-			if (attribute.getTimestamp() >= member.getTimestamp()){
+			if (attribute.getTimestamp() > member.getTimestamp()){
 				attributes.add(i, attribute);
 				return;
 			}
