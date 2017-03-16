@@ -1,6 +1,6 @@
 package com.i4hq.flame.core;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;
 import org.junit.Test;
